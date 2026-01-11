@@ -13,6 +13,9 @@
 # Vendor dependencies
 /vendor/
 
+# Assets folder (too large for git - 108MB)
+/public/theme/assets/
+
 # Composer
 composer.lock
 
@@ -29,6 +32,6 @@ Thumbs.db
 *.cache
 
 # Uploads (if sensitive)
-# /public/uploads/
+/public/uploads/
 
 
