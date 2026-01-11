@@ -1,0 +1,41 @@
+{
+  "authors": [
+    {
+      "name": "Ken"
+    }
+  ],
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  },
+  "description": "A lightweight PHP MVC Framework.",
+  "license": "MIT",
+  "name": "kenneth/fir",
+  "require": {
+    "catfan/medoo": "^2.1.10",
+    "ext-iconv": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-mysqli": "*",
+    "ext-openssl": "*",
+    "ext-pdo": "*",
+    "league/omnipay": "^3.2",
+    "omnipay/paypal": "^3.0",
+    "php": ">=8.0",
+    "symfony/var-dumper": "^4.3",
+    "vlucas/phpdotenv": "^2.4",
+    "infobip/infobip-api-php-client": "^5.1",
+    "twilio/sdk": "^7.0",
+    "ext-curl": "*",
+    "endroid/qr-code": "^5.0",
+    "symfony/mailer": "^6.0",
+    "mailjet/mailjet-apiv3-php": "^1.6",
+    "nesbot/carbon": "^3.2",
+    "google/apiclient": "2.15.0",
+    "phpmailer/phpmailer": "^6.9",
+    "ext-gd": "*",
+    "facebook/graph-sdk": "^5.1"
+  },
+  "type": "project"
+}
