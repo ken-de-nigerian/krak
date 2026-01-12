@@ -1,11 +1,14 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
 
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
 use Exception;
-use Fir\Helpers\EmailHelper;
+use KenDeNigerian\Krak\helpers\emailhelper;
 
-class Forgot extends Controller 
+class forgot extends Controller 
 {
 
     /**
@@ -127,7 +130,7 @@ class Forgot extends Controller
                                     $subject = $forgotTemplate['subject'];
                             
                                     // Send email
-                                    if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                    if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                         $response = [
                                             'status' => 'success',
                                             'message' => 'If your email exists in our system, we\'ve just sent you a reset link',

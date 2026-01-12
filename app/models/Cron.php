@@ -1,8 +1,12 @@
 <?php
 
-namespace Fir\Models;
+declare(strict_types=1);
 
-use Fir\Helpers\EmailHelper;
+namespace KenDeNigerian\Krak\models;
+
+use KenDeNigerian\Krak\core\Model;
+
+use KenDeNigerian\Krak\helpers\emailhelper;
 use Carbon\Carbon;
 use Exception;
 
@@ -168,7 +172,7 @@ class Cron extends Model
                                     $subject = $interestTemplate['subject'];
                                     $body = $interestTemplate['body'];
 
-                                    if (EmailHelper::sendEmail($settings, $recipientEmail, $subject, $body)) {
+                                    if (emailhelper::sendEmail($settings, $recipientEmail, $subject, $body)) {
                                         // Calculate new balance after adding interest
                                         $postBalance = $user['interest_wallet'] + $updated['interest'];
 
@@ -533,7 +537,7 @@ class Cron extends Model
                                 $body = $retryTemplate['body'];
                         
                                 // Send email and update depositsProcessed count
-                                if (EmailHelper::sendEmail($settings, $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($settings, $recipientEmail, $subject, $body)) {
                                     $depositsProcessed++;
                                 }
                             }else{

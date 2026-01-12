@@ -1,11 +1,15 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
 
 use Exception;
-use Fir\Helpers\EmailHelper;
+use KenDeNigerian\Krak\helpers\emailhelper;
 
-class Twofa extends Controller 
+class twofa extends Controller 
 {
     /**
      * Constructor
@@ -106,7 +110,7 @@ class Twofa extends Controller
                     $body = $otpTemplate['body'];
     
                     // If email was sent successfully
-                    if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                    if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                         $response = [
                             'status' => 'success',
                             'message' => 'OTP code resent successfully.'

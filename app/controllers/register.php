@@ -1,15 +1,19 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
 
 use Exception;
-use Fir\Helpers\EmailHelper;
-use Fir\Helpers\QrHelper;
+use KenDeNigerian\Krak\helpers\emailhelper;
+use KenDeNigerian\Krak\helpers\qrhelper;
 
 /**
  * Controller class for handling user registration.
  */
-class Register extends Controller 
+class register extends Controller 
 {
     /**
      * Constructor
@@ -173,7 +177,7 @@ class Register extends Controller
                                                 // Generate QR code for the user
                                                 $qrCodeContent = getenv('URL_PATH') . '/register/?ref=' . $userid;
 
-                                                if (QrHelper::createQR($qrCodeContent, $userid)) {
+                                                if (qrhelper::createQR($qrCodeContent, $userid)) {
 
                                                     $qr_image = $userid . '_qrcode.png';
 
@@ -213,7 +217,7 @@ class Register extends Controller
                                                             $referralBody = $referralTemplate['body'];
 
                                                             // Send referral email
-                                                            $referralEmailSent = EmailHelper::sendEmail($data['settings'], $referralEmail, $referralSubject, $referralBody);
+                                                            $referralEmailSent = emailhelper::sendEmail($data['settings'], $referralEmail, $referralSubject, $referralBody);
                                                         }
 
                                                         // welcome template is enabled & not null
@@ -231,7 +235,7 @@ class Register extends Controller
                                                             $welcomeBody = $welcomeTemplate['body'];
                                                         
                                                             // Send welcome email
-                                                            $welcomeEmailSent = EmailHelper::sendEmail($data['settings'], $recipientEmail, $welcomeSubject, $welcomeBody);
+                                                            $welcomeEmailSent = emailhelper::sendEmail($data['settings'], $recipientEmail, $welcomeSubject, $welcomeBody);
                                                         }
 
                                                         if ($referralEmailSent && $welcomeEmailSent) {
@@ -297,7 +301,7 @@ class Register extends Controller
                                                 // Generate QR code for the user
                                                 $qrCodeContent = getenv('URL_PATH') . '/register/?ref=' . $userid;
 
-                                                if (QrHelper::createQR($qrCodeContent, $userid)) {
+                                                if (qrhelper::createQR($qrCodeContent, $userid)) {
 
                                                     $qr_image = $userid . '_qrcode.png';
                                                     
@@ -338,7 +342,7 @@ class Register extends Controller
                                                                 $welcomeSubject = $welcomeTemplate['subject'];
                                                                 $welcomeBody = $welcomeTemplate['body'];
 
-                                                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $welcomeSubject, $welcomeBody)) {
+                                                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $welcomeSubject, $welcomeBody)) {
                                                                     $response = [
                                                                         'status' => 'success',
                                                                         'redirect' => 'user/dashboard'

@@ -1,14 +1,17 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
 
 use Facebook\Exceptions\FacebookResponseException;
 use Facebook\Exceptions\FacebookSDKException;
 use Facebook\Facebook;
 use Exception;
-use Fir\Helpers\EmailHelper;
-
-class Meta extends Controller
+use KenDeNigerian\Krak\helpers\emailhelper;
+class meta extends Controller
 {
     /**
      * Constructor
@@ -130,7 +133,7 @@ class Meta extends Controller
                                     $subject = $otpTemplate['subject'];
                                     $recipientEmail = $user["email"];
 
-                                    if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                    if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                         redirect('twofa');
                                     } else {
                                         $_SESSION['message'][] = ['error', 'Failed to send OTP email.'];

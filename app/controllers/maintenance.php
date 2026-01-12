@@ -1,8 +1,11 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
 
-class Maintenance extends Controller
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
+class maintenance extends Controller
 {
     /**
      * This method handles the index page for blocked users.

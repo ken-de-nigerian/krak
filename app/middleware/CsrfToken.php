@@ -1,17 +1,30 @@
 <?php
 
-namespace Fir\Middleware;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\middleware;
+
+use KenDeNigerian\Krak\core\Middleware\MiddlewareInterface;
+use Closure;
 
 /**
- * Class CsrfToken ensures that all POST requested have a valid CSRF Token
+ * CSRF Token Middleware
+ * Implements MiddlewareInterface following OCP principle
  */
-class CsrfToken
+class CsrfToken implements MiddlewareInterface
 {
-
-    public function __construct()
+    /**
+     * {@inheritdoc}
+     */
+    public function handle(mixed $request, Closure $next): mixed
     {
         $this->generateToken();
-        $this->validateToken();
+        
+        if (!$this->validateToken()) {
+            return $this->errorResponse();
+        }
+        
+        return $next($request);
     }
 
     /**
@@ -19,36 +32,44 @@ class CsrfToken
      */
     private function generateToken(): void
     {
-        // If there isn't any sessions set, or if the session is empty
         if (empty($_SESSION['token_id'])) {
-            // Generate a random session token
             $token_id = hash('sha256', substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 10));
-
-            // Store the token in the session
             $_SESSION['token_id'] = $token_id;
         }
     }
 
     /**
      * Validate the CSRF token
+     *
+     * @return bool
      */
-    private function validateToken(): void
+    private function validateToken(): bool
     {
-        // Check if POST data exists
-        if (!empty($_POST)) {
-            // Check if the 'token_id' parameter is set and matches the session token
-            if (!isset($_POST['token_id']) || $_POST['token_id'] != $_SESSION['token_id']) {
-                // If the token doesn't match, return an error response and exit
-                $response = [
-                    'status' => 'error',
-                    'message' => 'CsrfToken validation failed. Please refresh the page and try again.',
-                ];
-
-                // Send JSON response
-                header('Content-Type: application/json');
-                echo json_encode($response);
-                exit;
-            }
+        if (empty($_POST)) {
+            return true; // No POST data, skip validation
         }
+
+        if (!isset($_POST['token_id']) || $_POST['token_id'] != $_SESSION['token_id']) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Return error response
+     *
+     * @return string
+     */
+    private function errorResponse(): string
+    {
+        $response = [
+            'status' => 'error',
+            'message' => 'CsrfToken validation failed. Please refresh the page and try again.',
+        ];
+
+        header('Content-Type: application/json');
+        http_response_code(403);
+        return json_encode($response);
     }
 }

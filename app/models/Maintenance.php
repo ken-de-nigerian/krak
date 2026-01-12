@@ -1,6 +1,10 @@
 <?php
 
-namespace Fir\Models;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\models;
+
+use KenDeNigerian\Krak\core\Model;
 
 class Maintenance extends Model
 {

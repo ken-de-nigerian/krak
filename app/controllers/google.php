@@ -1,13 +1,17 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
 
 use Exception;
-use Fir\Helpers\EmailHelper;
+use KenDeNigerian\Krak\helpers\emailhelper;
 use Google_Client;
 use Google_Service_Oauth2;
 
-class Google extends Controller
+class google extends Controller
 {
     /**
      * Constructor
@@ -134,7 +138,7 @@ class Google extends Controller
                                     $body = $otpTemplate['body'];
                                 
                                     // if email was sent successfully redirect to auth page
-                                    if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                    if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                         redirect('twofa');
                                     } else {
                                         $_SESSION['message'][] = ['error', 'We failed to send otp email.'];

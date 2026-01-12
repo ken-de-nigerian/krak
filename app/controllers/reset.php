@@ -1,11 +1,14 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
 
 use Exception;
-use Fir\Helpers\EmailHelper;
-
-class Reset extends Controller
+use KenDeNigerian\Krak\helpers\emailhelper;
+class reset extends Controller
 {
     /**
      * Constructor
@@ -174,7 +177,7 @@ class Reset extends Controller
                                                     $body = $resetTemplate['body'];
                                             
                                                     // If email is sent successfully
-                                                    if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                                    if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                                         $response = [
                                                             'status' => 'success',
                                                             'redirect' => 'user/dashboard'

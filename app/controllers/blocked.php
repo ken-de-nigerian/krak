@@ -1,8 +1,12 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
 
-class Blocked extends Controller
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
+
+class blocked extends Controller
 {
 
     /**

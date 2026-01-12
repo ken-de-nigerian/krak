@@ -12,6 +12,11 @@
   "description": "A lightweight PHP MVC Framework.",
   "license": "MIT",
   "name": "kenneth/fir",
+  "autoload": {
+    "psr-4": {
+      "KenDeNigerian\\Krak\\": "app/"
+    }
+  },
   "require": {
     "catfan/medoo": "^2.1.10",
     "ext-iconv": "*",

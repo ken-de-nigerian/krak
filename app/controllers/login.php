@@ -1,11 +1,15 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
 
 use Exception;
-use Fir\Helpers\EmailHelper;
+use KenDeNigerian\Krak\helpers\emailhelper;
 
-class Login extends Controller 
+class login extends Controller 
 {
     /**
      * Constructor
@@ -121,7 +125,7 @@ class Login extends Controller
                                             $body = $otpTemplate['body'];
                                         
                                             // if email was sent successfully redirect to auth page
-                                            if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                            if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                                 $response = [
                                                     'status' => 'success',
                                                     'redirect' => 'twofa',

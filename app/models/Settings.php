@@ -1,9 +1,12 @@
 <?php
 
-namespace Fir\Models;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\models;
+
+use KenDeNigerian\Krak\core\Model;
 
 use Exception;
-
 class Settings extends Model
 {
     /**

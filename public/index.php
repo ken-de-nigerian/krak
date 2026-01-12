@@ -22,4 +22,4 @@ require_once(__DIR__ . '/../app/includes/init.php');
 require_once(__DIR__ . '/../app/includes/info.php');
 
 // Initialize the application
-$app = new Fir\App();
+$app = new KenDeNigerian\Krak\Core\App();

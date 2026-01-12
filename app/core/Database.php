@@ -1,6 +1,8 @@
 <?php
 
-namespace Fir\Connection;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\core;
 
 use Medoo\Medoo;
 use PDOException;

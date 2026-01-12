@@ -1,8 +1,12 @@
 <?php
 
-namespace Fir\Models;
+declare(strict_types=1);
 
-use Fir\Helpers\EmailHelper;
+namespace KenDeNigerian\Krak\models;
+
+use KenDeNigerian\Krak\core\Model;
+
+use KenDeNigerian\Krak\helpers\emailhelper;
 use Carbon\Carbon;
 use Exception;
 
@@ -325,7 +329,7 @@ class User extends Model {
                         $recipientEmail = $user['email'];
 
                         // Send email
-                        if (EmailHelper::sendEmail($settings, $recipientEmail, $subject, $body)) {
+                        if (emailhelper::sendEmail($settings, $recipientEmail, $subject, $body)) {
                             $ranksProcessed++; // Increment ranks processed
                         }
                     } else {

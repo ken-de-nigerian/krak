@@ -1,6 +1,8 @@
 <?php
 
-namespace Fir\Languages;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\core;
 
 /**
  * The Language class which gets and set the languages

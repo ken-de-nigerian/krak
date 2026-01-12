@@ -1,13 +1,15 @@
 <?php
 
-namespace Fir\Helpers;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\helpers;
 
 use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Exception;
 
-class QrHelper
+class qrhelper
 {
     /**
      * Generates a QR code image using the provided content.

@@ -1,10 +1,14 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
 
-use Fir\Helpers\EmailHelper;
+namespace KenDeNigerian\Krak\controllers;
 
-class Listings extends Controller
+use KenDeNigerian\Krak\core\Controller;
+
+use KenDeNigerian\Krak\helpers\emailhelper;
+
+class listings extends Controller
 {
 	/**
      * Constructor
@@ -143,7 +147,7 @@ class Listings extends Controller
                                 $body = $houseTemplate['body'];
                                 $subject = "New Property Listing Inquiry Alert: Check Out Your Latest Message!";
 
-                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                     // Email sent successfully
                                     $response = [
                                         'status' => 'success',

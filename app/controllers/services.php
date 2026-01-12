@@ -1,8 +1,11 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
 
-class Services extends Controller
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
+class services extends Controller
 {
 	/**
      * Constructor

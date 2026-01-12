@@ -31,6 +31,9 @@ Thumbs.db
 *.tmp
 *.cache
 
+# Cache directory
+/storage/cache/
+
 # Uploads (if sensitive)
 /public/uploads/
 

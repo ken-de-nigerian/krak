@@ -1,6 +1,8 @@
 <?php
 
-namespace Fir\Middleware;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\core;
 
 /**
  * The App middleware which run services before the core software is being executed
@@ -47,7 +49,7 @@ class Middleware
                 }
                 // Load and instantiate middleware classes
                 require_once(__DIR__ . '/../middleware/' . $name . '.php');
-                $class = 'Fir\Middleware\\' . $name;
+                $class = 'KenDeNigerian\Krak\Middleware\\' . $name;
                 new $class;
             }
         }

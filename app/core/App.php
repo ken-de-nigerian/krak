@@ -1,120 +1,304 @@
 <?php
 
-namespace Fir;
+declare(strict_types=1);
 
+namespace KenDeNigerian\Krak\core;
+
+use KenDeNigerian\Krak\core\Router;
+use KenDeNigerian\Krak\core\Container;
+use KenDeNigerian\Krak\core\Cache\CacheInterface;
+use KenDeNigerian\Krak\core\Cache\FileCache;
+use KenDeNigerian\Krak\core\ServiceProvider;
+use KenDeNigerian\Krak\core\Events\EventServiceProvider;
+use KenDeNigerian\Krak\core\Database;
 use Medoo\Medoo;
-use mysqli;
+use KenDeNigerian\Krak\core\Middleware\MiddlewarePipeline;
 
 /**
- * The app router which decides what router and method are selected based on the user's input
+ * Refactored App class following SRP and OCP principles
  */
 class App
 {
     /**
-     * List of GET parameters sent by the user
-     * @var array
+     * @var Container
      */
-    protected array $url = [];
+    private Container $container;
 
     /**
-     * Database connection property
-     * @var mysqli|null|Medoo
+     * @var Router
      */
-    protected mysqli|null|Medoo $db;
+    private Router $router;
 
     /**
-     * @var mixed|string
+     * @var Medoo
      */
-    private mixed $controller;
+    private Medoo $db;
 
     /**
-     * @var mixed|string
+     * @var CacheInterface
      */
-    private mixed $method;
+    private CacheInterface $cache;
 
     /**
      * App constructor.
      */
     public function __construct()
     {
-        // Create the database connection
-        $this->db = (new Connection\Database())->connect();
-
+        // Initialize container
+        $this->container = new Container();
+        
+        // Initialize database connection
+        $this->db = (new Database())->connect();
+        
+        // Initialize cache
+        $this->cache = new FileCache();
+        
+        // Register services in container
+        $this->registerServices();
+        
+        // Initialize router
+        $this->router = new Router();
+        
+        // Load routes
+        $this->loadRoutes();
+        
         // Load dependencies
         $this->loadDependencies();
-
+        
         // Load libraries
         $this->loadLibraries();
-
+        
         // Load helpers
         $this->loadHelpers();
-
-        // Instantiate the middleware
-        new Middleware\Middleware();
-
-        // Parse the URL
-        $this->parseUrl();
-
-        // Set default controller if no controller is specified
-        if (empty($this->url) || empty($this->url[0])) {
-            $this->url = ['home']; // Default controller
-        }
-
-        // Check if the controller exists
-        $controllerName = $this->url[0];
-        $controllerFile = __DIR__ . '/../controllers/' . $controllerName . '.php';
-        if (!file_exists($controllerFile)) {
-            // Controller not found, render _404 controller
-            echo $this->render404(); // Output the rendered page 404
-            return;
-        }
-
-        // Require the controller file based on the URL
-        require_once($controllerFile);
-
-        // Determine the controller class name
-        $class = 'Fir\Controllers\\' . ucfirst($controllerName);
-
-        // Instantiate the controller class
-        $this->controller = new $class($this->db, $this->url);
-
-        // Check if a method is specified
-        if (isset($this->url[1])) {
-            $methodName = $this->url[1];
-            if (!method_exists($this->controller, $methodName)) {
-                // Method not found, render _404 controller
-                echo $this->render404(); // Output the rendered page 404
-                return;
-            }
-            $this->method = $methodName;
-        } else {
-            // Default method if not specified
-            $this->method = 'index';
-        }
-
-        // Call the method from the controller and pass the params
-        $data = call_user_func_array([$this->controller, $this->method], $this->url);
-
-        // Run the controller
-        $this->controller->run($data);
+        
+        // Handle request
+        $this->handleRequest();
     }
 
     /**
-     * Render _ controller 404
+     * Register services in the container
+     */
+    private function registerServices(): void
+    {
+        // Register database as singleton
+        $this->container->singleton(Medoo::class, function () {
+            return $this->db;
+        });
+        
+        // Register cache as singleton
+        $this->container->singleton(CacheInterface::class, function () {
+            return $this->cache;
+        });
+        
+        // Register router
+        $this->container->singleton(Router::class, function () {
+            return $this->router;
+        });
+
+        // Register all services via ServiceProvider
+        $serviceProvider = new ServiceProvider($this->container, $this->db, $this->cache);
+        $serviceProvider->register();
+
+        // Register event listeners
+        $eventServiceProvider = new EventServiceProvider($this->container);
+        $eventServiceProvider->register();
+    }
+
+    /**
+     * Load route definitions
+     */
+    private function loadRoutes(): void
+    {
+        $routesFile = __DIR__ . '/../routes/web.php';
+        
+        if (file_exists($routesFile)) {
+            $routes = require $routesFile;
+            $routes($this->router);
+        }
+    }
+
+    /**
+     * Handle incoming request
+     */
+    private function handleRequest(): void
+    {
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $uri = $this->parseUri();
+        
+        // Dispatch route
+        $route = $this->router->dispatch($method, $uri);
+        
+        if ($route === null) {
+            // Fallback to legacy routing for backward compatibility
+            $this->handleLegacyRouting();
+            return;
+        }
+        
+        // Build middleware pipeline
+        $middleware = new MiddlewarePipeline($this->container);
+        $middleware->add($route->getMiddleware());
+        
+        // Process request through middleware and execute route
+        $response = $middleware->process(
+            ['route' => $route, 'uri' => $uri, 'method' => $method],
+            function ($request) use ($route) {
+                return $this->executeRoute($route);
+            }
+        );
+        
+        if ($response !== null) {
+            echo $response;
+        }
+    }
+
+    /**
+     * Execute route action
      *
-     * This method is responsible for rendering the 404 error page.
+     * @param \KenDeNigerian\Krak\core\Route $route
+     * @return mixed
+     */
+    private function executeRoute(\KenDeNigerian\Krak\core\Route $route): mixed
+    {
+        $action = $route->getAction();
+        
+        if ($action instanceof \Closure) {
+            return $action($route->getParameters());
+        }
+        
+        if (is_string($action)) {
+            // Format: "Controller@method"
+            if (strpos($action, '@') !== false) {
+                [$controllerName, $methodName] = explode('@', $action);
+            } else {
+                $controllerName = $action;
+                $methodName = 'index';
+            }
+            
+            // Convert controller name to lowercase to match actual class names
+            $controllerName = strtolower($controllerName);
+            
+            return $this->executeController($controllerName, $methodName, $route->getParameters());
+        }
+        
+        if (is_array($action)) {
+            [$controllerName, $methodName] = $action;
+            // Convert controller name to lowercase to match actual class names
+            $controllerName = strtolower($controllerName);
+            return $this->executeController($controllerName, $methodName, $route->getParameters());
+        }
+        
+        return null;
+    }
+
+    /**
+     * Execute controller method
      *
-     * @return string The rendered 404 error page content.
+     * @param string $controllerName
+     * @param string $methodName
+     * @param array $parameters
+     * @return mixed
+     */
+    private function executeController(string $controllerName, string $methodName, array $parameters): mixed
+    {
+        $controllerFile = __DIR__ . '/../controllers/' . strtolower($controllerName) . '.php';
+        
+        if (!file_exists($controllerFile)) {
+            return $this->render404();
+        }
+        
+        require_once($controllerFile);
+        
+        $className = 'KenDeNigerian\Krak\controllers\\' . strtolower($controllerName);
+        
+        if (!class_exists($className)) {
+            return $this->render404();
+        }
+        
+        // Build URL array for backward compatibility
+        $url = array_merge([strtolower($controllerName), $methodName], array_values($parameters));
+        
+        // Instantiate controller with container
+        $controller = new $className($this->db, $url, $this->container);
+        
+        if (!method_exists($controller, $methodName)) {
+            return $this->render404();
+        }
+        
+        // Call controller method
+        // Convert associative array to indexed array for method parameters
+        $methodParams = array_values($parameters);
+        $data = call_user_func_array([$controller, $methodName], $methodParams);
+        
+        // Run controller
+        $controller->run($data);
+        
+        return null;
+    }
+
+    /**
+     * Handle legacy routing for backward compatibility
+     */
+    private function handleLegacyRouting(): void
+    {
+        $url = [];
+        
+        if (isset($_GET['url'])) {
+            $url = explode('/', rtrim($_GET['url'], '/'));
+        }
+        
+        if (empty($url) || empty($url[0])) {
+            $url = ['home'];
+        }
+        
+        $controllerName = $url[0];
+        $controllerFile = __DIR__ . '/../controllers/' . $controllerName . '.php';
+        
+        if (!file_exists($controllerFile)) {
+            echo $this->render404();
+            return;
+        }
+        
+        require_once($controllerFile);
+        
+        $class = 'KenDeNigerian\Krak\controllers\\' . strtolower($controllerName);
+        $controller = new $class($this->db, $url, $this->container);
+        
+        $method = $url[1] ?? 'index';
+        
+        if (!method_exists($controller, $method)) {
+            echo $this->render404();
+            return;
+        }
+        
+        $data = call_user_func_array([$controller, $method], $url);
+        $controller->run($data);
+    }
+
+    /**
+     * Parse URI from request
+     *
+     * @return string
+     */
+    private function parseUri(): string
+    {
+        if (isset($_GET['url'])) {
+            return '/' . trim($_GET['url'], '/');
+        }
+        
+        return '/';
+    }
+
+    /**
+     * Render 404 error page
+     *
+     * @return string
      */
     private function render404(): string
     {
-        // Set HTTP response code to 404
         http_response_code(404);
-
-        // Render the 404 error page
         return $this->render('error/404');
     }
-    
+
     /**
      * Load Dependencies
      */
@@ -130,9 +314,7 @@ class App
      */
     private function loadLibraries(): void
     {
-        // Autoload any needed library
         spl_autoload_register(function ($class) {
-            // Explode the class namespace and select only the class name
             $className = explode('\\', $class);
             if (file_exists(__DIR__ . '/../libraries/' . end($className) . '.php')) {
                 require_once(__DIR__ . '/../libraries/' . end($className) . '.php');
@@ -152,16 +334,6 @@ class App
                 }
             }
             closedir($handle);
-        }
-    }
-
-    /**
-     * Parse and set the GET parameters sent by the user
-     */
-    public function parseUrl(): void
-    {
-        if (isset($_GET['url'])) {
-            $this->url = explode('/', rtrim($_GET['url'], '/'));
         }
     }
 

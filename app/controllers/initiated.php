@@ -1,8 +1,12 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
 
-class Initiated extends Controller 
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
+
+class initiated extends Controller 
 {
     /**
      * Constructor

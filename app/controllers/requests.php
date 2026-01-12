@@ -1,9 +1,12 @@
 <?php
 
-namespace Fir\Controllers;
-use Exception;
+declare(strict_types=1);
 
-class Requests extends Controller
+namespace KenDeNigerian\Krak\controllers;
+use KenDeNigerian\Krak\core\Controller;
+
+use Exception;
+class requests extends Controller
 {
     /**
      * Constructor

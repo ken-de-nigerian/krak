@@ -1,6 +1,8 @@
 <?php
 
-namespace Fir\Views;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\core;
 
 /**
  * The view class which generates the views

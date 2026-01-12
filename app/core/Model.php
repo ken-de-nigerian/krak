@@ -1,6 +1,8 @@
 <?php
 
-namespace Fir\Models;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\core;
 
 use Medoo\Medoo;
 

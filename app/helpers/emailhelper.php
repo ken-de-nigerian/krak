@@ -1,6 +1,8 @@
 <?php
 
-namespace Fir\Helpers;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\helpers;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -11,7 +13,7 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 
-class EmailHelper
+class emailhelper
 {
     /**
      * Sends an email using PHPMailer or Mailjet API

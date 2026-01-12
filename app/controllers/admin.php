@@ -1,12 +1,15 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\controllers;
 
 use Exception;
-use Fir\Helpers\EmailHelper;
-use Fir\Helpers\QrHelper;
+use KenDeNigerian\Krak\core\Controller;
+use KenDeNigerian\Krak\helpers\emailhelper;
+use KenDeNigerian\Krak\helpers\qrhelper;
 
-class Admin extends Controller {
+class admin extends Controller {
 
     /**
      * index
@@ -811,7 +814,7 @@ class Admin extends Controller {
                                 $body = $testTemplate['body'];
 
                                 // Send email
-                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                     // Email sent successfully
                                     $response = [
                                         'status' => 'success',
@@ -2284,7 +2287,7 @@ class Admin extends Controller {
                                             // Generate QR code for the user
                                             $qrCodeContent = getenv('URL_PATH') . '/register/?ref=' . $userid;
 
-                                            if (QrHelper::createQR($qrCodeContent, $userid)) {
+                                            if (qrhelper::createQR($qrCodeContent, $userid)) {
 
                                                 $qr_image = $userid . '_qrcode.png';
                                                 
@@ -2327,7 +2330,7 @@ class Admin extends Controller {
                                                             $welcomeSubject = $welcomeTemplate['subject'];
                                                             $welcomeBody = $welcomeTemplate['body'];
 
-                                                            if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $welcomeSubject, $welcomeBody)) {
+                                                            if (emailhelper::sendEmail($data['settings'], $recipientEmail, $welcomeSubject, $welcomeBody)) {
                                                                 $response = [
                                                                     'status' => 'success',
                                                                     'message' => 'This user account has been registered successfully.',
@@ -2503,7 +2506,7 @@ class Admin extends Controller {
                                         $addMoneySubject = $addMoneyTemplate['subject'];
                                         $addMoneyBody = $addMoneyTemplate['body'];
 
-                                        if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $addMoneySubject, $addMoneyBody)) {
+                                        if (emailhelper::sendEmail($data['settings'], $recipientEmail, $addMoneySubject, $addMoneyBody)) {
                                             $response = [
                                                 'status' => 'success',
                                                 'message' => 'The funds have been successfully added to the user account.'
@@ -2644,7 +2647,7 @@ class Admin extends Controller {
                                                 $removeMoneySubject = $removeMoneyTemplate['subject'];
                                                 $removeMoneyBody = $removeMoneyTemplate['body'];
 
-                                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $removeMoneySubject, $removeMoneyBody)) {
+                                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $removeMoneySubject, $removeMoneyBody)) {
                                                     $response = [
                                                         'status' => 'success',
                                                         'message' => 'Funds have been successfully removed from the user\'s account.'
@@ -2769,7 +2772,7 @@ class Admin extends Controller {
                                         $subject = $input->get('subject');
                                         $body = $notificationTemplate['body'];
 
-                                        if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                        if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                             // Email sent successfully
                                             $response = [
                                                 'status' => 'success',
@@ -2892,7 +2895,7 @@ class Admin extends Controller {
                                         $body = $resetTemplate['body'];
 
                                         // If email is sent successfully
-                                        if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                        if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                             $response = [
                                                 'status' => 'success',
                                                 'message' => 'Password has been reset successfully.',
@@ -3940,7 +3943,7 @@ class Admin extends Controller {
                                 $body = $approveAddressTemplate['body'];
 
                                 // Send email
-                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                     // Email sent successfully
                                     $response = [
                                         'status' => 'success',
@@ -4010,7 +4013,7 @@ class Admin extends Controller {
                                 $body = $rejectAddressTemplate['body'];
 
                                 // Send email
-                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                     // Email sent successfully
                                     $response = [
                                         'status' => 'success',
@@ -4098,7 +4101,7 @@ class Admin extends Controller {
                                 $body = $approveIdentityTemplate['body'];
 
                                 // Send email
-                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                     // Email sent successfully
                                     $response = [
                                         'status' => 'success',
@@ -4168,7 +4171,7 @@ class Admin extends Controller {
                                 $body = $rejectIdentityTemplate['body'];
 
                                 // Send email
-                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                     // Email sent successfully
                                     $response = [
                                         'status' => 'success',
@@ -4867,7 +4870,7 @@ class Admin extends Controller {
                                 $recipientEmail = $user['email'];
                                 $subject = $input->get('subject');
 
-                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                     // Email sent successfully
                                     $response = [
                                         'status' => 'success',
@@ -5033,7 +5036,7 @@ class Admin extends Controller {
                                     $recipientEmail = $user['email'];
                                     $subject = $input->get('subject');
 
-                                    if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                    if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                         // Email sent successfully
                                         $response = [
                                             'status' => 'success',
@@ -5140,7 +5143,7 @@ class Admin extends Controller {
                                         $recipientEmail = $user['email'];
                                         $subject = $input->get('subject');
 
-                                        if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                        if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                             // Email sent successfully
                                             $response = [
                                                 'status' => 'success',
@@ -5254,7 +5257,7 @@ class Admin extends Controller {
                                         $recipientEmail = $user['email'];
                                         $subject = $input->get('subject');
 
-                                        if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                        if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                             // Email sent successfully
                                             $response = [
                                                 'status' => 'success',
@@ -5368,7 +5371,7 @@ class Admin extends Controller {
                                         $recipientEmail = $user['email'];
                                         $subject = $input->get('subject');
 
-                                        if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                        if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                             // Email sent successfully
                                             $response = [
                                                 'status' => 'success',
@@ -5482,7 +5485,7 @@ class Admin extends Controller {
                                             $recipientEmail = $user['email'];
                                             $subject = $input->get('subject');
 
-                                            if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                            if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                                 // Email sent successfully
                                                 $response = [
                                                     'status' => 'success',
@@ -5597,7 +5600,7 @@ class Admin extends Controller {
                                             $recipientEmail = $user['email'];
                                             $subject = $input->get('subject');
 
-                                            if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                            if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                                 // Email sent successfully
                                                 $response = [
                                                     'status' => 'success',
@@ -6800,7 +6803,7 @@ class Admin extends Controller {
                                                 $referralSubject = $referralTemplate['subject'];
 
                                                 // Send referral email
-                                                $referralEmailSent = EmailHelper::sendEmail($data['settings'], $referralEmail, $referralSubject, $referralBody);
+                                                $referralEmailSent = emailhelper::sendEmail($data['settings'], $referralEmail, $referralSubject, $referralBody);
                                             }
 
                                             // investment template is enabled
@@ -6817,7 +6820,7 @@ class Admin extends Controller {
                                                 $investmentSubject = $investmentTemplate['subject'];
 
                                                 // Send plan purchase email
-                                                $investmentEmailSent = EmailHelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $investmentBody);
+                                                $investmentEmailSent = emailhelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $investmentBody);
                                             }
 
                                             // investment template is enabled
@@ -6831,7 +6834,7 @@ class Admin extends Controller {
                                                 $body = $approveDepositTemplate['body'];
 
                                                 // Send plan purchase email
-                                                $approveDepositEmailSent = EmailHelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $body);
+                                                $approveDepositEmailSent = emailhelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $body);
                                             }
 
                                             if ($referralEmailSent && $investmentEmailSent && $approveDepositEmailSent) {
@@ -6909,7 +6912,7 @@ class Admin extends Controller {
                                                 $investmentSubject = $investmentTemplate['subject'];
 
                                                 // Send plan purchase email
-                                                $investmentEmailSent = EmailHelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $investmentBody);
+                                                $investmentEmailSent = emailhelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $investmentBody);
                                             }
 
                                             // investment template is enabled
@@ -6923,7 +6926,7 @@ class Admin extends Controller {
                                                 $body = $approveDepositTemplate['body'];
 
                                                 // Send plan purchase email
-                                                $approveDepositEmailSent = EmailHelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $body);
+                                                $approveDepositEmailSent = emailhelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $body);
                                             }
 
                                             if ($investmentEmailSent && $approveDepositEmailSent) {
@@ -7002,7 +7005,7 @@ class Admin extends Controller {
                                             $investmentSubject = $investmentTemplate['subject'];
 
                                             // Send plan purchase email
-                                            $investmentEmailSent = EmailHelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $investmentBody);
+                                            $investmentEmailSent = emailhelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $investmentBody);
                                         }
 
                                         // investment template is enabled
@@ -7016,7 +7019,7 @@ class Admin extends Controller {
                                             $body = $approveDepositTemplate['body'];
 
                                             // Send plan purchase email
-                                            $approveDepositEmailSent = EmailHelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $body);
+                                            $approveDepositEmailSent = emailhelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $body);
                                         }
 
                                         if ($investmentEmailSent && $approveDepositEmailSent) {
@@ -7095,7 +7098,7 @@ class Admin extends Controller {
                                         $investmentSubject = $investmentTemplate['subject'];
 
                                         // Send plan purchase email
-                                        $investmentEmailSent = EmailHelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $investmentBody);
+                                        $investmentEmailSent = emailhelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $investmentBody);
                                     }
 
                                     // investment template is enabled
@@ -7109,7 +7112,7 @@ class Admin extends Controller {
                                         $body = $approveDepositTemplate['body'];
 
                                         // Send plan purchase email
-                                        $approveDepositEmailSent = EmailHelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $body);
+                                        $approveDepositEmailSent = emailhelper::sendEmail($data['settings'], $recipientEmail, $investmentSubject, $body);
                                     }
 
                                     if ($investmentEmailSent && $approveDepositEmailSent) {
@@ -7163,7 +7166,7 @@ class Admin extends Controller {
                                     $body = $approveDepositTemplate['body'];
 
                                     // Send email
-                                    if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                    if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                         // Email sent successfully
                                         $response = [
                                             'status' => 'success',
@@ -7239,7 +7242,7 @@ class Admin extends Controller {
                                 $body = $rejectDepositTemplate['body'];
 
                                 // Send email
-                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                     // Email sent successfully
                                     $response = [
                                         'status' => 'success',
@@ -7577,7 +7580,7 @@ class Admin extends Controller {
                                 $body = $approveWithdrawalTemplate['body'];
 
                                 // Send email
-                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                     // Email sent successfully
                                     $response = [
                                         'status' => 'success',
@@ -7652,7 +7655,7 @@ class Admin extends Controller {
                                 $body = $rejectWithdrawalTemplate['body'];
 
                                 // Send email
-                                if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                     // Email sent successfully
                                     $response = [
                                         'status' => 'success',
@@ -8799,7 +8802,7 @@ class Admin extends Controller {
                                     $subject = $approveLoanTemplate['subject'];
                                     $body = $approveLoanTemplate['body'];
 
-                                    if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                    if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                         $response = [
                                             'status' => 'success',
                                             'message' => 'Loan request approved successfully.'
@@ -8902,7 +8905,7 @@ class Admin extends Controller {
                                     $subject = $rejectLoanTemplate['subject'];
                                     $body = $rejectLoanTemplate['body'];
 
-                                    if (EmailHelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
+                                    if (emailhelper::sendEmail($data['settings'], $recipientEmail, $subject, $body)) {
                                         $response = [
                                             'status' => 'success',
                                             'message' => 'Loan request rejected successfully.'

@@ -1,8 +1,11 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
 
-class Payment extends Controller
+namespace KenDeNigerian\Krak\controllers;
+
+use KenDeNigerian\Krak\core\Controller;
+class payment extends Controller
 {
     /**
      * Constructor

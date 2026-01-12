@@ -1,6 +1,8 @@
 <?php
 
-namespace Fir\Libraries;
+declare(strict_types=1);
+
+namespace KenDeNigerian\Krak\libraries;
 
 /**
  * Cookie handling class

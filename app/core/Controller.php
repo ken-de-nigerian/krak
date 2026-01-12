@@ -1,23 +1,27 @@
 <?php
 
-namespace Fir\Controllers;
+declare(strict_types=1);
 
-use Fir\Views;
+namespace KenDeNigerian\Krak\core;
+
+use Medoo\Medoo;
+use KenDeNigerian\Krak\core\Cache\CacheInterface;
 
 /**
- * The base Controller upon which all the other controllers are extended on
+ * Refactored base Controller with service injection support
+ * Implements SRP and OCP principles
  */
 class Controller
 {
     /**
      * The database connection
-     * @var    object
+     * @var Medoo
      */
-    public object $db;
+    public Medoo $db;
 
     /**
      * The site settings from the DB
-     * @var    array
+     * @var array
      */
     protected array $settings;
 
@@ -32,18 +36,33 @@ class Controller
      * @var array
      */
     protected array $url;
+
+    /**
+     * @var array
+     */
     private array $extensions;
+
+    /**
+     * @var array
+     */
     private array $whatsapp;
 
     /**
-     * Controller constructor.
-     * @param $db
-     * @param $url
+     * @var Container|null
      */
-    public function __construct($db, $url)
+    protected ?Container $container = null;
+
+    /**
+     * Controller constructor.
+     * @param Medoo $db
+     * @param array $url
+     * @param Container|null $container
+     */
+    public function __construct(Medoo $db, array $url, ?Container $container = null)
     {
         $this->db = $db;
         $this->url = $url;
+        $this->container = $container;
 
         // Set the site settings and extensions
         $settings = $this->model('Settings');
@@ -57,7 +76,7 @@ class Controller
         }
 
         // Instantiate the View
-        $this->view = new Views\View($this->settings, $this->extensions, $this->whatsapp, $this->url);
+        $this->view = new View($this->settings, $this->extensions, $this->whatsapp, $this->url);
     }
 
     /**
@@ -70,9 +89,41 @@ class Controller
         require_once(__DIR__ . '/../models/' . $model . '.php');
 
         // The namespace\class must be defined in a string as it can't be called shorted using new namespace\$var
-        $class = 'Fir\Models\\' . $model;
+        $class = 'KenDeNigerian\Krak\models\\' . $model;
 
         return new $class($this->db);
+    }
+
+    /**
+     * Get service from container
+     *
+     * @param string $service
+     * @return mixed
+     */
+    protected function service(string $service): mixed
+    {
+        if ($this->container === null) {
+            throw new \Exception('Container not available. Use new routing system.');
+        }
+
+        $serviceClass = 'KenDeNigerian\Krak\\Services\\' . $service;
+        return $this->container->get($serviceClass);
+    }
+
+    /**
+     * Get repository from container
+     *
+     * @param string $repository
+     * @return mixed
+     */
+    protected function repository(string $repository): mixed
+    {
+        if ($this->container === null) {
+            throw new \Exception('Container not available. Use new routing system.');
+        }
+
+        $repoClass = 'KenDeNigerian\Krak\\Repositories\\' . $repository;
+        return $this->container->get($repoClass);
     }
 
     /**
@@ -85,7 +136,7 @@ class Controller
         require_once(__DIR__ . '/../libraries/' . $library . '.php');
 
         // The namespace\class must be defined in a string as it can't be called shorted using new namespace\$var
-        $class = 'Fir\Libraries\\' . $library;
+        $class = 'KenDeNigerian\Krak\libraries\\' . $library;
 
         return new $class($this->db);
     }
@@ -97,25 +148,25 @@ class Controller
      */
     public function run(array $data = null): void
     {
-        if(empty($this->url[0])) {
+        if (empty($this->url[0])) {
             $this->url[0] = 'home';
-        }   
+        }
         
-        if($this->url[0] == 'admin') {
+        if ($this->url[0] === 'admin') {
             $data['url'] = $this->url[1];
-            if($this->url[1] == 'login'):
+            if ($this->url[1] === 'login') {
                 $data['content_view'] = $data['content'];
-            else:
+            } else {
                 $data['navigation_view'] = $this->getAdminNavigation();
                 $data['sidenav_view'] = $this->getAdminSidenav();
                 $data['content_view'] = $data['content'];
                 $data['footer_view'] = $this->getAdminFooter();
-            endif;
+            }
             $data['scripts_view'] = $this->getAdminScripts();
             echo $this->view->render($data, 'wrapper-admin');
-        }else {
+        } else {
             $data['url'] = $this->url[0];
-            if ($this->url[0] == 'user') {
+            if ($this->url[0] === 'user') {
                 $data['header_view'] = $this->getHeader();
                 
                 if ($this->url[0] == 'user') {
@@ -136,23 +187,17 @@ class Controller
 
             if (in_array($this->url[0], ['cron', 'initiated'])) {
                 echo $this->view->render($data, 'wrapper-cron');
-
-            }elseif (in_array($this->url[0], ['login', 'register', 'forgot', 'reset', 'setup', 'google', 'meta', 'twofa'])) {
+            } elseif (in_array($this->url[0], ['login', 'register', 'forgot', 'reset', 'setup', 'google', 'meta', 'twofa'])) {
                 echo $this->view->render($data, 'wrapper-auth');
-
-            }elseif (in_array($this->url[0], ['blocked', 'maintenance'])) {
+            } elseif (in_array($this->url[0], ['blocked', 'maintenance'])) {
                 echo $this->view->render($data, 'wrapper-blocked');
-
-            }elseif (in_array($this->url[0], ['payment', 'investment', 'payout'])) {
+            } elseif (in_array($this->url[0], ['payment', 'investment', 'payout'])) {
                 echo $this->view->render($data, 'wrapper-payment');
-
-            }elseif ($this->url[0] == 'coins') {
+            } elseif ($this->url[0] === 'coins') {
                 echo $this->view->render($data, 'wrapper-coins');
-                
-            }elseif ($this->url[0] == 'user') {
+            } elseif ($this->url[0] === 'user') {
                 echo $this->view->render($data, 'wrapper-user');
-                
-            }else {
+            } else {
                 echo $this->view->render($data, 'wrapper');
             }
         }
@@ -165,7 +210,6 @@ class Controller
      */
     private function getHeader(): string
     {
-
         $data['url'] = $this->url[0];
         
         /*Use User Library*/
@@ -354,6 +398,7 @@ class Controller
         $data['settings'] = $this->settings;
 
         $adminModel = $this->model('Admin');
+        $settingsModel = $this->model('Settings');
 
         $data['gateways'] = $settingsModel->getGateways(); 
         $data['withdrawal-gateways'] = $settingsModel->getWithdraws();
